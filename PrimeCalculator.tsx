@@ -64,7 +64,7 @@ const PrimeCalculator = () => {
       setPrimeDivisors(sortedPrimeDivs);
       setPrimeFactorization(getPrimeFactorization(num, sortedPrimeDivs));
       setIsPrime(prime);
-      setNumber('');
+      // Do not clear input here to avoid double submit issue
     } else {
       setDivisors([]);
       setPrimeDivisors([]);
@@ -73,11 +73,35 @@ const PrimeCalculator = () => {
     }
   };
 
+  // Helper to get Unicode superscript for 1-9
+  const superscriptMap: { [key: number]: string } = {
+    0: '\u2070',
+    1: '\u00B9',
+    2: '\u00B2',
+    3: '\u00B3',
+    4: '\u2074',
+    5: '\u2075',
+    6: '\u2076',
+    7: '\u2077',
+    8: '\u2078',
+    9: '\u2079',
+  };
+
+  const getSuperscript = (num: number): string => {
+    return num
+      .toString()
+      .split('')
+      .map((digit) => superscriptMap[parseInt(digit)] || '^' + digit)
+      .join('');
+  };
+
   const renderFactorization = () => {
     return primeFactorization.map((factor, index) => (
       <Text key={index} style={styles.inlineText}>
         {factor.base}
-        {factor.power > 1 ? <Text style={styles.sup}>{factor.power}</Text> : null}
+        {factor.power > 1
+          ? getSuperscript(factor.power)
+          : ''}
         {index < primeFactorization.length - 1 ? ' × ' : ''}
       </Text>
     ));
